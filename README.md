@@ -7,7 +7,6 @@ their name!
 OUTPUT FOR `Mon, Jul 7, 2025`
 
 ```csv
-1enrique3
 Name,User ID
 1enrique3,U0946705BCG
 Abdalllah Ramadan,U0391602BNE
