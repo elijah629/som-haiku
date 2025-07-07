@@ -1,61 +1,70 @@
 # The Great Haiku Search
 
-I wrote this script to analyze all the hackclub server member IDs and find out
-which ones, just by mentioning them, make the haiku bot make a haiku out of
-their name!
+I wrote this script with `@Emir David Bruges Belaides` to analyze all the
+hackclub server member IDs and find out which ones, just by mentioning them,
+make the haiku bot make a haiku out of their name!
 
-OUTPUT FOR `Mon, Jul 7, 2025`
+OUTPUT FOR `Mon, Jul 8, 2025`
 
 ```csv
 Name,User ID
-1enrique3,U0946705BCG
-Abdalllah Ramadan,U0391602BNE
-Abhinav Mishra X Viii,U09180022F9
-adhithiya650,U0837515STT
-Alba,U079762H5QB
-aram,U0616280E6P
-Ayush Khapekar,U02D7182919
-Ben Honeyfield,U08256B6150
-caoanhtai2702,U093746FH7T
-Ceridwen,U0922U59807
-chaliseaayush2006,U0939K8171D
-Clara,U072753VD6V
-Dishita,U08830304SW
-Erin,U092757EJBT
-felixadesola22,U0847M89204
-Femil Savaliya,U0333750JSF
-Gabrijel,U092770LB5X
-Gassermkamel,U0887M2635K
-Gosakan,U0819951VGC
-himyyade,U0837100Q1K
-Jack Wei,U0555G8993L
-Joey M,U0615830F1V
-JOHANERIS SAYRIN AVALOS FERNANDEZ,U09210B6293
-Jong Sanboudattalath,U0859M3537F
-M Palmer,U093778NZDY
-Mahe,U0918830QH5
-Mat Araujo Business,U0825T8435H
-matari,U0866F6396Y
-Mayon Dragon,U0893112AQM
-milkyway218,U0810858B5L
-MrEntrasil,U087732MT6H
-Nash,U0763G9649W
-Nathan Perlman,U0744BL3327
-Nicholas Ektheerachaisakul,U0918216Z2A
-Nihar Phanse,U093768RV6U
-Paul Thomas,U0228UW2887
-Pavan,U0837D3276D
-pirjademl7,U092748FFV3
+Abdul Wasay,U09233X915X
+Abdullah Saqib,U0823HV759T
+Abel Malzew,U0838EL1309
+Abhinav Ajith,U0799M813QV
+AGROCRYPTO,U086LJ3799B
+Alex Forman,U0824L493EF
+alfredysadonis40,U0870KWG796
+annsvetlanam09,U0823V689K9
+bakedpotato1029,U0823F859J6
+Carmelo Kyles,U08240UR719
+Cindy Zhao,U0780V477JL
+Dewan Protiva (she/her),U0203M9445V
+dominicjsoutwell,U0925G472UR
+Eniola Olawore,U0863PCR737
+Evelyn Qiao,U0852A961D3
+fahamkhatri777,U0831FG279S
+ghostlest330,U0825E353EH
+haarisarshad194,U0828FS787N
+hannah6347k,U0844S8350S
+jannati,U0874S535GW
+Jasper Hartzell,U093262L1UY
+JOSH,U0931K419HU
+Joshua Yoo,U0929Q523B5
+Kaputt4,U0919J395UP
+Karam El labadie,U0836L548T0
+khushaliduhoon008,U0941CG443E
+Kshitij Verma,U0920FA271U
+Leander Riefel,U0917HPK771
+mason26611,U0825U126JE
+matterider,U0809AG2740
+matthew58izaguirre,U0825RX572P
+Max Allgaier11,U0917K3118F
+Mrigaank,U0947G817V2
+mucyo prince,U0899BQA830
+Mukul,U0874TG137T
+Mukund MV,U0935NG8205
+Myroslav Tryhubets,U0924EU5404
+nickvalverd,U0851GT159A
+Nicola,U0789RAF814
+Niko,U07960MD940
+Noah Intros,U0842T126U9
+Param Thawani,U0944UTB457
+Pedro Lopez,U0828F9U760
 Pritam,U0884S09960
-ravishankarkumark527,U0846E4629E
-rishitusurana4,U0917J4397V
-s1carnevalepma,U0920580W20
-Snow Flakesss,U0905944ZK2
-Sophie Möller,U0922708ESV
-Soumyadeb Misra,U026S15799P
-Spark,U094728N0BT
-sri bathran,U0834P17802
-strpak,U0823UP3199
-Tray Chen,U0710313P70
-yashdharme6,U092755KUMB
+q14bhutton,U0825TKN127
+qwemnb1495,U0921Q445RC
+raghuwanshiaditya160,U0825TT8403
+Raufu Abdulrahman,U0928S977TM
+rizvi4600779,U0872GPC892
+salma,U0921MGV491
+samimmud000,U0922L3V537
+Sharat Kondapally,U0833G893N3
+Shriram Mange,U0922GJ7909
+swatiduck13,U0946EG255X
+Taha,U0822B687PU
+Taheir Ahmed Ashraf,U0239AG449L
+Tobi,U0898Q583C3
+YY E,U047704K400
+Đa Vương Nguyên,U0922EHA879
 ```

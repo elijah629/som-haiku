@@ -1,114 +1,87 @@
 use crate::numbers::format_human;
-use std::io::{self, BufRead};
-use std::iter::repeat_n;
+use std::io::Write;
+use std::io::{self, BufRead, BufWriter};
 
 mod est;
 mod numbers;
 
-fn main() {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let stdin = io::stdin();
     let handle = stdin.lock();
 
+    let stdout = io::stdout();
+    let mut writer = BufWriter::new(stdout.lock());
+
     for line in handle.lines() {
-        match line {
-            Ok(line_content) => {
-                let words = format(&line_content);
-                let words = words.split(' ').map(est::SyllableEstimator::estimate);
+        let line_content = line?;
 
-                //                let padding = compute_haiku_padding(&words);
-                // sum of the “core” words
+        let words = format(&line_content)
+            .split(' ')
+            .map(est::estimate)
+            .collect::<Vec<_>>();
 
-                if compute_haiku_padding(&words.collect::<Vec<_>>()) {
-                    println!("{line_content}");
-                }
+        let sum = words.iter().sum();
+
+        /*for (left, right) in compute_haiku_padding(sum, &words) {
+            for _ in 0..left {
+                write!(writer, "a ")?;
             }
-            Err(e) => {
-                eprintln!("Error reading line: {}", e);
-                break;
+
+            // Push main content
+            write!(writer, "{}", &line_content)?;
+
+            for _ in 0..right {
+                write!(writer, " a")?;
             }
+
+            writeln!(writer)?;
+        }*/
+
+        if compute_haiku_padding(sum, &words) {
+            writeln!(writer, "{line_content}")?;
         }
     }
-    /*    let words = format("U092FMXURQV");
-    let words = words.split(' ').collect::<Vec<_>>();
 
-    println!("{words:?}");
+    writer.flush()?;
 
-    let words = words
-        .into_iter()
-        .map(est::SyllableEstimator::estimate)
-        .collect::<Vec<_>>();
-
-    println!("{words:?}");
-
-    println!("{:?}", compute_haiku_padding(&words));*/
+    Ok(())
 }
-
-/*fn format(text: &str) -> String {
-    let text = text.to_ascii_lowercase();
-
-    let mut out = String::new(); //with_capacity(text.len());
-    let mut chars = text.chars().peekable();
-
-    while let Some(&ch) = chars.peek() {
-        if ch.is_ascii_digit() {
-            // parse the full digit run
-            let mut n = 0u64;
-            while let Some(&d) = chars.peek() {
-                if d.is_ascii_digit() {
-                    // safe because d is '0'..'9'
-                    n = n * 10 + (d as u8 - b'0') as u64;
-                    chars.next();
-                } else {
-                    break;
-                }
-            }
-            out.push_str(&format_human(n));
-        } else {
-            // copy any non‑digit
-            out.push(ch);
-            chars.next();
-        }
-    }
-
-    out
-}*/
 
 fn format(text: &str) -> String {
     let text = text.to_ascii_lowercase();
 
-    let mut out = Vec::with_capacity(text.len()); // Start with capacity to avoid reallocations
-    let mut chars = text.chars().peekable();
+    let mut output = String::with_capacity(text.len() * 2);
+    let mut number: u16 = 0;
+    let mut in_number = false;
 
-    while let Some(ch) = chars.next() {
-        if ch.is_ascii_digit() {
-            // Parse the full digit run efficiently
-            let mut n = 0u64;
-            while let Some(&d) = chars.peek() {
-                if d.is_ascii_digit() {
-                    n = n * 10 + (d as u8 - b'0') as u64;
-                    chars.next(); // consume the digit
-                } else {
-                    break;
-                }
-            }
-            out.extend(format_human(n).chars()); // Collect the formatted number directly
+    for c in text.chars() {
+        if let Some(d) = c.to_digit(10) {
+            number = number * 10 + d as u16;
+            in_number = true;
         } else {
-            // Copy non-digit characters directly
-            out.push(ch);
+            if in_number {
+                output.push_str(&format_human(number));
+                number = 0;
+                in_number = false;
+            }
+            output.push(c);
         }
     }
 
-    // Convert the collected characters into a String once
-    String::from_iter(out)
+    if in_number {
+        output.push_str(&format_human(number));
+    }
+
+    output
 }
 
-pub fn compute_haiku_padding(id_sylls: &[usize]) -> bool {
-    // sum of the “core” words
-    let total: usize = id_sylls.iter().sum();
+pub fn compute_haiku_padding(total: u8, id_sylls: &[u8]) -> bool {
+    // Vec<(u8, u8)> {
+    let total_len = id_sylls.len() as u8;
     // how many extra 1‐syllables we can distribute
-    let max_pad = 17usize.saturating_sub(total);
+    let max_pad = 17u8.saturating_sub(total);
 
-    //let mut sol = Vec::new();
+    //let mut sol = Vec::with_capacity(5);
 
     // try every possible total pad count
     for pad in 0..=max_pad {
@@ -117,10 +90,7 @@ pub fn compute_haiku_padding(id_sylls: &[usize]) -> bool {
             let right = pad - left;
 
             // build the full stream: `left` ones, then core syllables, then `right` ones
-            let mut stream = Vec::with_capacity(left + id_sylls.len() + right);
-            stream.extend(repeat_n(1, left));
-            stream.extend(id_sylls.iter().cloned());
-            stream.extend(repeat_n(1, right));
+            let len = left + total_len + right;
 
             // try to carve out 5, then 7, then 5
             let mut idx = 0;
@@ -128,11 +98,17 @@ pub fn compute_haiku_padding(id_sylls: &[usize]) -> bool {
             for &target in &[5, 7, 5] {
                 let mut sum = 0;
                 while sum < target {
-                    if idx >= stream.len() {
+                    if idx >= len {
                         ok = false;
                         break;
                     }
-                    sum += stream[idx];
+                    sum += if idx < left {
+                        1 // left padding
+                    } else if idx < left + total_len {
+                        id_sylls[(idx - left) as usize] // core syllables
+                    } else {
+                        1 // right padding
+                    };
                     idx += 1;
                 }
                 if !ok || sum != target {
@@ -142,8 +118,9 @@ pub fn compute_haiku_padding(id_sylls: &[usize]) -> bool {
             }
 
             // ensure we've consumed the entire stream
-            if ok && idx == stream.len() {
+            if ok && idx == len {
                 return left == 0 && right == 0;
+                //return Some((left, right));
                 //sol.push((left, right));
             }
         }
@@ -151,74 +128,5 @@ pub fn compute_haiku_padding(id_sylls: &[usize]) -> bool {
 
     false
     //sol
+    //None
 }
-
-/*
-#[derive(Debug, Clone)]
-enum Syl {
-    N(u8),
-    B,
-    L(String),
-}
-
-fn format(text: &str) -> Vec<u8> {
-    let text = text.to_ascii_lowercase();
-
-    let mut out = vec![]; //String::with_capacity(text.len());
-    let mut chars = text.chars().peekable();
-
-    let mut built = String::new();
-
-    while let Some(&ch) = chars.peek() {
-        if ch.is_ascii_digit() {
-            if !built.is_empty() {
-                out.push(Syl::L(built.clone()));
-                built.clear();
-            }
-
-            // parse the full digit run
-            let mut n = 0u64;
-            while let Some(&d) = chars.peek() {
-                if d.is_ascii_digit() {
-                    // safe because d is '0'..'9'
-                    n = n * 10 + (d as u8 - b'0') as u64;
-                    chars.next();
-                } else {
-                    break;
-                }
-            }
-            // replace with your spelled‑out version
-            //out.push_str(format_human(n));
-            out.extend(format_human(n));
-        } else {
-            // copy any non‑digit
-            built.push(ch);
-            chars.next();
-        }
-    }
-
-    if !built.is_empty() {
-        out.push(Syl::L(built.clone()));
-    }
-
-    let mut real_out = vec![];
-    let mut current = 0;
-
-    println!("{out:?}");
-    for s in out {
-        match s {
-            Syl::N(x) => current += x,
-            Syl::B => {
-                real_out.push(current);
-                current = 0;
-            }
-            Syl::L(x) => current += SyllableEstimator::estimate(&x) as u8,
-        };
-    }
-
-    if current != 0 {
-        real_out.push(current);
-    }
-
-    real_out
-}*/
