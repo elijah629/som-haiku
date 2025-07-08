@@ -7,10 +7,10 @@ make the haiku bot make a haiku out of their name!
 ## WASM
 
 For demo purposes, this crate has been ported to WASM and a static site. Compile
-it yourself with:
+the demo wasm it yourself with:
 
 ```sh
-wasm-pack build --target web --release
+wasm-pack build --release --no-pack --weak-refs -d demo/src/pkg
 ```
 
 All the flags have been preconfigured in the `Cargo.toml`
