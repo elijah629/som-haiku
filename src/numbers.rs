@@ -22,35 +22,35 @@ const TENS: [&str; 10] = [
 const SCALES: [&str; 5] = ["", "thousand", "million", "billion", "trillion"];
 
 #[inline(always)]
-fn write_hundreds(n: u16, out: &mut String) {
+fn write_hundreds(n: usize, out: &mut String) {
     // Handles 0..999, but we only call when n > 0
     let mut rem = n;
     if rem >= 100 {
         let h = rem / 100;
-        out.push_str(ONES[h as usize]);
-        out.push_str(" hundred and");
+        out.push_str(ONES[h]);
+        out.push_str(" hundred");
         rem %= 100;
         if rem != 0 {
-            out.push(' ');
+            out.push_str(" and ");
         }
     }
     if rem >= 20 {
         let t = rem / 10;
-        out.push_str(TENS[t as usize]);
+        out.push_str(TENS[t]);
         let u = rem % 10;
         if u != 0 {
-            out.push('-'); // -
-            out.push_str(ONES[u as usize]);
+            out.push('-');
+            out.push_str(ONES[u]);
         }
     } else if rem >= 10 {
-        out.push_str(TEENS[(rem - 10) as usize]);
+        out.push_str(TEENS[rem - 10]);
     } else if rem > 0 {
-        out.push_str(ONES[rem as usize]);
+        out.push_str(ONES[rem]);
     }
 }
 
 /// Spell out any number 0 <= n < 10^15 (extend SCALES for larger).
-pub fn format_human(mut n: u16) -> String {
+pub fn format_human(mut n: usize) -> String {
     if n == 0 {
         return ONES[0].to_string();
     }

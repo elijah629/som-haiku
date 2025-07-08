@@ -15,13 +15,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     for line in handle.lines() {
         let line_content = line?;
 
-        let words = format(&line_content)
-            .split(' ')
-            .map(est::estimate)
-            .collect::<Vec<_>>();
+        let strwords = format(&line_content);
+        let words = strwords.split_ascii_whitespace().map(est::estimate);
 
-        let sum = words.iter().sum();
-
+        if is_haiku(words) {
+            writeln!(writer, "{line_content}")?;
+        }
         /*for (left, right) in compute_haiku_padding(sum, &words) {
             for _ in 0..left {
                 write!(writer, "a ")?;
@@ -36,10 +35,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             writeln!(writer)?;
         }*/
-
-        if compute_haiku_padding(sum, &words) {
-            writeln!(writer, "{line_content}")?;
-        }
     }
 
     writer.flush()?;
@@ -51,12 +46,12 @@ fn format(text: &str) -> String {
     let text = text.to_ascii_lowercase();
 
     let mut output = String::with_capacity(text.len() * 2);
-    let mut number: u16 = 0;
+    let mut number = 0;
     let mut in_number = false;
 
     for c in text.chars() {
         if let Some(d) = c.to_digit(10) {
-            number = number * 10 + d as u16;
+            number = number * 10 + d as usize;
             in_number = true;
         } else {
             if in_number {
@@ -75,7 +70,7 @@ fn format(text: &str) -> String {
     output
 }
 
-pub fn compute_haiku_padding(total: u8, id_sylls: &[u8]) -> bool {
+/*pub fn compute_haiku_padding(total: u8, id_sylls: &[u8]) -> bool {
     // Vec<(u8, u8)> {
     let total_len = id_sylls.len() as u8;
     // how many extra 1‐syllables we can distribute
@@ -120,13 +115,29 @@ pub fn compute_haiku_padding(total: u8, id_sylls: &[u8]) -> bool {
             // ensure we've consumed the entire stream
             if ok && idx == len {
                 return left == 0 && right == 0;
-                //return Some((left, right));
-                //sol.push((left, right));
             }
         }
     }
 
     false
-    //sol
-    //None
+}*/
+
+pub fn is_haiku<I>(mut sylls: I) -> bool
+where
+    I: Iterator<Item = u8>,
+{
+    for target in [5, 7, 5] {
+        let mut sum = 0;
+        for syll in sylls.by_ref() {
+            sum += syll;
+            if sum >= target {
+                break;
+            }
+        }
+        if sum != target {
+            return false;
+        }
+    }
+
+    sylls.next().is_none()
 }

@@ -85,12 +85,12 @@ pub fn estimate(word: &str) -> u8 {
         "thousand" => 2,
         "million" => 2,
         "billion" => 2,
-        "trillion" => 3,
+        "trillion" => 2,
 
         // If not found
         _ => {
             if word.len() <= 1 {
-                return 0;
+                return word.len() as u8;
             }
 
             let w = word.to_ascii_lowercase();
