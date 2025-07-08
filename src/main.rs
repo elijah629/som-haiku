@@ -1,18 +1,16 @@
-use crate::numbers::format_human;
-use std::io::Write;
-use std::io::{self, BufRead, BufWriter};
+use som_haiku::process;
 
-mod est;
-mod numbers;
+#[cfg(not(target_arch = "wasm32"))]
+fn main() -> std::io::Result<()> {
+    let stdin = std::io::stdin();
+    let reader = stdin.lock();
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let stdin = io::stdin();
-    let handle = stdin.lock();
+    let stdout = std::io::stdout();
+    let writer = std::io::BufWriter::new(stdout.lock());
 
-    let stdout = io::stdout();
-    let mut writer = BufWriter::new(stdout.lock());
+    process(reader, writer)
 
-    for line in handle.lines() {
+    /*for line in handle.lines() {
         let line_content = line?;
 
         let strwords = format(&line_content);
@@ -39,105 +37,5 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     writer.flush()?;
 
-    Ok(())
-}
-
-fn format(text: &str) -> String {
-    let text = text.to_ascii_lowercase();
-
-    let mut output = String::with_capacity(text.len() * 2);
-    let mut number = 0;
-    let mut in_number = false;
-
-    for c in text.chars() {
-        if let Some(d) = c.to_digit(10) {
-            number = number * 10 + d as usize;
-            in_number = true;
-        } else {
-            if in_number {
-                output.push_str(&format_human(number));
-                number = 0;
-                in_number = false;
-            }
-            output.push(c);
-        }
-    }
-
-    if in_number {
-        output.push_str(&format_human(number));
-    }
-
-    output
-}
-
-/*pub fn compute_haiku_padding(total: u8, id_sylls: &[u8]) -> bool {
-    // Vec<(u8, u8)> {
-    let total_len = id_sylls.len() as u8;
-    // how many extra 1‐syllables we can distribute
-    let max_pad = 17u8.saturating_sub(total);
-
-    //let mut sol = Vec::with_capacity(5);
-
-    // try every possible total pad count
-    for pad in 0..=max_pad {
-        // split that pad between left and right
-        for left in 0..=pad {
-            let right = pad - left;
-
-            // build the full stream: `left` ones, then core syllables, then `right` ones
-            let len = left + total_len + right;
-
-            // try to carve out 5, then 7, then 5
-            let mut idx = 0;
-            let mut ok = true;
-            for &target in &[5, 7, 5] {
-                let mut sum = 0;
-                while sum < target {
-                    if idx >= len {
-                        ok = false;
-                        break;
-                    }
-                    sum += if idx < left {
-                        1 // left padding
-                    } else if idx < left + total_len {
-                        id_sylls[(idx - left) as usize] // core syllables
-                    } else {
-                        1 // right padding
-                    };
-                    idx += 1;
-                }
-                if !ok || sum != target {
-                    ok = false;
-                    break;
-                }
-            }
-
-            // ensure we've consumed the entire stream
-            if ok && idx == len {
-                return left == 0 && right == 0;
-            }
-        }
-    }
-
-    false
-}*/
-
-pub fn is_haiku<I>(mut sylls: I) -> bool
-where
-    I: Iterator<Item = u8>,
-{
-    for target in [5, 7, 5] {
-        let mut sum = 0;
-        for syll in sylls.by_ref() {
-            sum += syll;
-            if sum >= target {
-                break;
-            }
-        }
-        if sum != target {
-            return false;
-        }
-    }
-
-    sylls.next().is_none()
+    Ok(())*/
 }

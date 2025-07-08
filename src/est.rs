@@ -1,4 +1,4 @@
-use regex::Regex;
+use regex::bytes::Regex;
 use std::sync::LazyLock;
 
 static SUB_CONTAINS: [&str; 12] = [
@@ -21,15 +21,15 @@ static ADD_CONTAINS: [&str; 12] = [
     "ia", "riet", "dien", "ien", "iet", "iu", "iest", "io", "ii", "ily", "asm", "ism",
 ];
 
-static ADD_ENDS_WITH: [&str; 9] = [
-    "oala", "iara", "ying", "earest", "arer", "aress", "eate", "eation", "dnt",
+static ADD_ENDS_WITH: [&str; 16] = [
+    "oala", "iara", "ying", "earest", "arer", "aress", "eate", "eation", "dnt", "abl", "ebl",
+    "ibl", "obl", "ubl", "ybl", "mbl",
 ];
 
 static ADD_STARTS_WITH: [&str; 5] = ["mc", "coad", "coag", "coal", "coax"];
 
 static ADD_REGEX: LazyLock<Vec<Regex>> = LazyLock::new(|| {
     let patterns = [
-        "[aeiouym]bl$",
         "[aeiou]{3}",
         "([^aeiouy])1l$",
         "[^l]lien",
@@ -124,15 +124,17 @@ pub fn estimate(word: &str) -> u8 {
                     syllables += 1;
                 }
             }
+
             for re in ADD_REGEX.iter() {
-                if re.is_match(w) {
+                if re.is_match(w.as_bytes()) {
                     syllables += 1;
                 }
             }
 
-            // split on runs of non-vowels (vowels + y)
-            // equivalent to JS: word.split(/[^aeiouy]+/)
-            let parts = SPLIT_RE.split(w).filter(|s| !s.is_empty()).count() as u8;
+            let parts = SPLIT_RE
+                .split(w.as_bytes())
+                .filter(|s| !s.is_empty())
+                .count() as u8;
 
             ((syllables + parts) - negative_syllables).max(1)
         }

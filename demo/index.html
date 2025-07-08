@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link href="/src/globals.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + TS</title>
+  </head>
+  <body>
+    <main class="mx-auto p-5 max-w-5xl">
+      <h1 class="text-2xl">
+        som-haiku WASM demo
+        <a
+          href="https://github.com/elijah629/som-haiku"
+          class="text-blue-600 underline"
+          >Source</a
+        >
+      </h1>
+      <div class="flex flex-col gap-6 p-4">
+        <h2>
+          Filter every ID. Include: if the ID is a haiku. Exclude: everything.
+          Uses the precomputed ID list by default.
+        </h2>
+        <div class="flex gap-6">
+          <div class="flex flex-col gap-4 w-1/3">
+            <div class="flex gap-2 items-center">
+              <label for="file-upload" class="button"> Upload File </label>
+
+              <input
+                id="file-upload"
+                type="file"
+                class="hidden"
+                onchange="document.getElementById('file-name').textContent = this.files[0]?.name || 'No file chosen';"
+              />
+
+              <span id="file-name" class="text-sm text-gray-600 italic"
+                >No file chosen</span
+              >
+            </div>
+
+            <button
+              class="button bg-green-600 hover:bg-green-700"
+              id="filter-button"
+            >
+              Filter by isHaiku
+            </button>
+
+            <span id="filter-count">Count: </span>
+          </div>
+
+          <div class="w-2/3">
+            <textarea
+              id="filter-output"
+              class="w-full h-full min-h-[200px] p-4 border rounded-lg resize-y shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Filtered output will appear here..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-6 p-4">
+        <h2>
+          Make your ID a haiku. To get your ID: Click on profile > 3 Dots ... >
+          Copy member ID. NOTE: There may be many solutions to one ID. If output
+          is the same: Your ID is a haiku. If output is empty: Your ID cannot be
+          made into a haiku.
+        </h2>
+        <div class="flex gap-6">
+          <textarea
+            id="id-io"
+            class="w-full h-full min-h-[200px] p-4 border rounded-lg resize-y shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Put your ID in this box, then click the button"
+            type="text"
+          ></textarea>
+          <button class="button bg-green-600 hover:bg-green-700" id="id-button">
+            Calculate Haiku
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

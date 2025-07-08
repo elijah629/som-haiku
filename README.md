@@ -4,6 +4,17 @@ I wrote this script with `@Emir David Bruges Belaides` to analyze all the
 Hackclub server member IDs and find out which ones, just by mentioning them,
 make the haiku bot make a haiku out of their name!
 
+## WASM
+
+For demo purposes, this crate has been ported to WASM and a static site. Compile
+it yourself with:
+
+```sh
+wasm-pack build --target web --release
+```
+
+All the flags have been preconfigured in the `Cargo.toml`
+
 ## DIY
 
 The below output was created with the following `nushell` script:
